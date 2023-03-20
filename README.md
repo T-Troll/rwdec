@@ -11,4 +11,4 @@ Windows, Visual Studio 2019+
 
 ## Usage
 
-`bmf2dec <BIOS .rw (decoded text) dump> > <output file>`
+`bmf2dec <BIOS decoded asl dump>.rw > <output file>`
