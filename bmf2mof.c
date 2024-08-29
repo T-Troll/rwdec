@@ -25,7 +25,7 @@
 //#undef print_variable
 //#undef print_qualifiers
 //#undef print_variable_type
-//#include <string>
+#include <string.h>
 #include <stdio.h>
 #include "mbfconst.h"
 
@@ -237,3 +237,10 @@ static void print_classes(struct mof_class *classes, uint32_t count) {
       printf("\n");
   }
 }
+
+#ifdef GENMOF
+int process_data(char *data, uint32_t size) {
+  size_t ret = fwrite(data, 1, size, stdout);
+  return (ret == size) ? 0 : 1;
+}
+#endif
