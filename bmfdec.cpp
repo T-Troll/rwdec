@@ -16,10 +16,10 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 
-#include <stdint.h>
-#include <stdio.h>
-#include <string.h>
-#include <errno.h>
+#include <cstdint>
+#include <cstdio>
+#include <cstring>
+#include <cerrno>
 //#include <string>
 //#include <unistd.h>
 
@@ -268,9 +268,13 @@ int ds_dec(void* pin,int lin, void* pout, int lout, int flg)
 
 
 #include <string>
-#include <wtypes.h>
+#include <iostream>
+#include <fstream>
+#include <iterator>
+#include <cerrno>
 
-using namespace std;
+using std::string;
+using std::ifstream;
 
 extern "C" int process_data(char* data, uint32_t size);
 
@@ -280,16 +284,11 @@ int main(int argc, char* argv[]) {
   size_t lin;
   int lout = 0;
 
-  HANDLE file = CreateFile(argv[1], GENERIC_READ, FILE_SHARE_READ, NULL, OPEN_EXISTING, 0, NULL);
-  if (file != INVALID_HANDLE_VALUE) {
+  ifstream file{ argv[1] };
+  if (file) {
       size_t linePos = 0;
-      DWORD filesize = GetFileSize(file, NULL);
-      byte* filebuf = new byte[filesize + 1];
-      ReadFile(file, (LPVOID)filebuf, filesize, NULL, NULL);
-      CloseHandle(file);
-      filebuf[filesize] = 0;
-      string content = (char*)filebuf;
-      delete[] filebuf;
+      string content{ std::istreambuf_iterator<char>{file}, {} };
+      file.close();
       string line;
       while ((linePos = content.find("Device(", linePos)) != string::npos) {
           string blockName = content.substr(linePos + 7, 4);
@@ -306,7 +305,7 @@ int main(int argc, char* argv[]) {
               while ((inPos = line.find("0x", inPos)) != string::npos) {
                   string digit = line.substr(inPos, 4);
                   inPos += 4;
-                  sscanf_s(digit.c_str(), "%hhi", &((byte*)pin)[lin++]);
+                  ((char*)pin)[lin++] = std::stoi(digit, nullptr, 16);
               }
               lout = pin[3];
               if (ds_dec((char*)pin + 16, lin - 16, pout, lout, 0) == lout) {

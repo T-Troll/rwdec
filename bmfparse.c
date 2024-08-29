@@ -24,6 +24,7 @@
 #include <string.h>
 #include <stdint.h>
 #include <stdio.h>
+#include <ctype.h>
 //#include <strings.h>
 #include "mbfconst.h"
 
@@ -992,6 +993,7 @@ static void print_classes(struct mof_class *classes, uint32_t count) {
 #undef print_classes
 static void print_classes(struct mof_class *classes, uint32_t count);
 
+#ifndef GENMOF
 int process_data(char *data, uint32_t size) {
   struct mof_classes classes;
   classes = parse_bmf(data, size);
@@ -999,3 +1001,4 @@ int process_data(char *data, uint32_t size) {
   free_classes(classes.classes, classes.count);
   return 0;
 }
+#endif
