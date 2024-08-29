@@ -240,10 +240,7 @@ static void print_classes(struct mof_class *classes, uint32_t count) {
 
 #ifdef GENMOF
 int process_data(char *data, uint32_t size) {
-  struct mof_classes classes;
-  classes = parse_bmf(data, size);
-  print_classes(classes.classes, classes.count);
-  free_classes(classes.classes, classes.count);
-  return 0;
+  size_t ret = fwrite(data, 1, size, stdout);
+  return (ret == size) ? 0 : 1;
 }
 #endif
